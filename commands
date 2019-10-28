@@ -1,0 +1,5 @@
+start server:
+yarn start
+
+start frontend:
+react-native run-android

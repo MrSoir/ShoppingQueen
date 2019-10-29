@@ -21,7 +21,7 @@ let width = ww;
 let opacity = 1;
 
 function NodeHeading(args){
-  const [hdng, setHeading] = useState('Hallo Nila!');
+  const [hdng, setHeading] = useState('check availability of products');
   const [cntr, setCounter] = useState(0);
 
   const [imgOpacity] = useState(new Animated.Value(opacity));
@@ -57,11 +57,6 @@ function NodeHeading(args){
   function toggleOpacity(){
     setOpacityState(!opacityState);
   }
-
-  setTimeout(()=>{
-    setHeading('Hallo Nila! -' + cntr);
-    setCounter(cntr + 1);
-  }, 1000);
 
   return (
     <Animated.View style={{...styles.Main, opacity: imgOpacity, height: imgHeight}}>
@@ -110,9 +105,11 @@ const styles = StyleSheet.create({
     height: height,
   },
   text: {
+    width: '50%',
+    maxWidth: 200,
     textAlign: 'center',
     fontSize: 24,
-    color: 'lime',
+    color: 'lightblue',
     fontWeight: 'bold',
   }
 });

@@ -45,7 +45,7 @@ function CodeScanningPage(args){
   }
 
   function hideProductInfo(hide){
-    const animStyle = !viewHidden
+    const animStyle = !productInfoHidden
                           ? LayoutAnimation.Presets.easeInEaseOut
                           : LayoutAnimation.Presets.spring;
     LayoutAnimation.configureNext(animStyle);

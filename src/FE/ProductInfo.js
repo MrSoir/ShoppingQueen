@@ -90,7 +90,36 @@ function AvailibilityTable({headers, tableData}){
   const orderCol = td && td.length > 0 ? td[0].length-1 : -1;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}
+          onStartShouldSetResponder={(e)=>{
+            console.log('onStartShouldSetResponder: ');
+            return true;
+          }}
+          onMoveShouldSetResponder={(e)=>{
+            console.log('onMoveShouldSetResponder: ');
+            return true;
+          }}
+
+          onResponderGrant={(e)=>{
+            console.log('onResponderGrant: ');
+          }}
+          onResponderReject={(e)=>{
+            console.log('onResponderReject: ');
+          }}
+
+          onResponderMove={(e)=>{
+            console.log('onMoveShouldSetResponder: ');
+          }}
+          onResponderRelease={(e)=>{
+            console.log('onMoveShouldSetResponder: ');
+          }}
+          onResponderTerminationRequest={(e)=>{
+            console.log('onMoveShouldSetResponder: ');
+          }}
+          onResponderTerminate={(e)=>{
+            console.log('onMoveShouldSetResponder: ');
+          }}
+    >
       <Table borderStyle={{borderColor: 'transparent'}}>
         <Row data={hrds} style={styles.head} textStyle={styles.headText}/>
         {
@@ -132,24 +161,10 @@ function ProductInfo({productInfo, price, productInfoHidden: viewHidden}){
     };
   });
 
-  const toggleShowView = ()=>{
-    // const animStyle = !viewHidden
-    //                       ? LayoutAnimation.Presets.easeInEaseOut
-    //                       : LayoutAnimation.Presets.spring;
-    // LayoutAnimation.configureNext(animStyle);
-    // setViewHidden( !viewHidden );
-  };
-
   console.log('productInfos: ', productInfos);
 
   return (
     <View>
-      <TouchableOpacity
-        onPress={toggleShowView}>
-        <Text style={{textAlign: 'center', padding: 10}}>
-          Press me to {viewHidden ? 'show view' : 'hide view'}!
-        </Text>
-      </TouchableOpacity>
       {!viewHidden && (
           <View style={{...styles.Main}}>
             <Text style={styles.ProductInfoHeading}>

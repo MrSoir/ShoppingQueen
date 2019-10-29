@@ -44,7 +44,7 @@ function PendingView(args){
   );
 }
 
-function RNCameraTest(args){
+function RNCameraTest({onCodeDetected, width, height}){
   const cameraRef = useRef(null);
 
   async function takePicture(){
@@ -52,16 +52,16 @@ function RNCameraTest(args){
     console.log('taking a picture...');
     const options = { quality: 0.5, base64: true };
     const data = await camera.takePictureAsync(options);
-    if(args.onTakePicture){
-      args.onTakePicture(data);
+    if(onCodeDetected){
+      onCodeDetected(data);
     }
     console.log(data.uri);
   }
   return (
-    <View style={{...styles.RNCameraContainer, width: args.width, height: args.height}}>
+    <View style={{...styles.RNCameraContainer, width, height}}>
       <RNCamera
         ref={cameraRef}
-        style={{...styles.RNCamera, width: args.width, height: args.height}}
+        style={{...styles.RNCamera, width, height}}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
         androidCameraPermissionOptions={{
@@ -102,17 +102,18 @@ function RNCameraTest(args){
   );
 }
 
-function EmbeddedCamera(args){
+function EmbeddedCamera({onCodeDetected: argsOnCodeDectected,
+                         onStartScanning: argsOnStartScanning}){
 
   const [infoText, setInfoText] = useState('scanning code...');
-  const [hideCamera, setHideCamera] = useState(false);
+  const [cameraHidden, setCameraHidden] = useState(false);
   const [qrCodePreviewImg, setQrCodePreviewImg] = useState(require('../images/qrcode.png'));
 
   let camarePreviewWidth = Math.min(Dimensions.get('window').width, Dimensions.get('window').height) * 0.6;
   let camarePreviewHeight = camarePreviewWidth;
 
   useEffect(()=>{
-  }, [hideCamera]);
+  }, [cameraHidden]);
 
   useEffect(()=>{
   }, []);
@@ -122,48 +123,49 @@ function EmbeddedCamera(args){
   }, [qrCodePreviewImg]);
 
   function toggleHideCamera(){
+    setHideCamera()
+  }
+  function setHideCamera(hide){
     console.log('clicked');
-    const animStyle = !hideCamera
+    const animStyle = hide
                           ? LayoutAnimation.Presets.easeInEaseOut
                           : LayoutAnimation.Presets.spring;
     LayoutAnimation.configureNext(animStyle);
-    setHideCamera( !hideCamera );
+    setCameraHidden( hide );
   }
 
-  function onTakePicture(img){
-    setQrCodePreviewImg( img );
+  function onCodeDetected(img){
+    // setQrCodePreviewImg( img );
+    setHideCamera(true);
+    if(argsOnCodeDectected){
+      argsOnCodeDectected(img);
+    }
+  }
+  function startScanning(){
+    setHideCamera(false);
+    if(argsOnStartScanning){
+      argsOnStartScanning();
+    }
   }
 
   return (
-    <View>
-      <TouchableOpacity
-        onPress={toggleHideCamera}>
-        <Text style={{textAlign: 'center', padding: 10}}>
-          Press me to {hideCamera ? 'show camera' : 'hide camera'}!
-        </Text>
-      </TouchableOpacity>
-      {hideCamera &&
+    <View style={styles.Main}>
+      {cameraHidden &&
         (
           <Animated.View style={styles.HideButton}>
-            <Button onPress={toggleHideCamera}
+            <Button onPress={startScanning}
                     title={'scan code'}
                     color={styles.HideButton.backgroundColor}
             />
           </Animated.View>
         )
       }
-      {!hideCamera &&
+      {!cameraHidden &&
         (
-          <Animated.View style={styles.Main}>
+          <Animated.View style={styles.CameraView}>
             <RNCameraTest width={camarePreviewWidth}
                           height={camarePreviewHeight}
-                          onTakePicture={onTakePicture}/>
-            <View style={{...styles.CameraDiv, width: camarePreviewWidth, height: camarePreviewHeight}}>
-              <Image
-                style={styles.QrCoddeImageExample}
-                source={qrCodePreviewImg}
-              />
-            </View>
+                          onCodeDetected={onCodeDetected}/>
             <View style={styles.InfoDiv}>
               <Text style={styles.InfoText}>
                 {infoText}
@@ -179,14 +181,12 @@ function EmbeddedCamera(args){
 
 const styles = StyleSheet.create({
   Main: {
+    marginTop: 20,
+  },
+  CameraView: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    overflow: 'hidden',
-  },
-  CameraDiv: {
-    width: '100%',
-    height: '80%',
     overflow: 'hidden',
   },
   RNCameraContainer: {
